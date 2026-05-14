@@ -115,7 +115,7 @@ public class BrowserTest {
     @Test
     @DisplayName("Check subscribers count")
     void subscribers() throws Exception {
-        int requestSubscribers = Request.getSubscribersCount(Request.sendGetRequest("https://youtube.googleapis.com/youtube/v3/channels?part=statistics&forHandle=as29nitate&key=" + "AIzaSyD4JZX8IX-l9vyDih7Qt_7hGozwbt6imZs"));
+        int requestSubscribers = Request.getSubscribersCount(Request.sendGetRequest("https://youtube.googleapis.com/youtube/v3/channels?part=statistics&forHandle=as29nitate&key=" + ConfigLoader.getApiKey()));
         elementUtil.get(ConfigLoader.getBaseUrl());
         elementUtil.click(homePage.rejectCookiesBtn);
         elementUtil.get(ConfigLoader.getBaseUrl()+"/@as29nitate");

@@ -42,3 +42,6 @@ build/
 
 ### BOB ###
 .bob
+
+### Secrets ###
+src/main/resources/secrets.properties

@@ -24,12 +24,12 @@ public class ConfigLoader {
     }
 
     /**
-     * Retrieves the API key from the configuration file.
+     * Retrieves the API key from the secrets.properties file.
      *
      * @return the API key value, or null if not found
      */
     public static String getApiKey() {
-        return getConfig("api.key");
+        return getSecret("api.key");
     }
     /**
      * Retrieves the browser type from the configuration file.
@@ -60,6 +60,27 @@ public class ConfigLoader {
     public static String getConfig(String key) {
         Properties properties = new Properties();
         try (FileInputStream fileInputStream = new FileInputStream("src/main/resources/config.properties")) {
+            properties.load(fileInputStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return properties.getProperty(key);
+    }
+
+    /**
+     * Retrieves a secret value by its key from the secrets.properties file.
+     * <p>
+     * This method loads the properties file from {@code src/main/resources/secrets.properties}
+     * and returns the value associated with the specified key. This file should contain
+     * sensitive information like API keys and should be excluded from version control.
+     * </p>
+     *
+     * @param key the secret property key to retrieve
+     * @return the secret value, or null if the key is not found or an error occurs
+     */
+    public static String getSecret(String key) {
+        Properties properties = new Properties();
+        try (FileInputStream fileInputStream = new FileInputStream("src/main/resources/secrets.properties")) {
             properties.load(fileInputStream);
         } catch (Exception e) {
             e.printStackTrace();
