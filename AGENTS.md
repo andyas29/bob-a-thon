@@ -114,10 +114,9 @@ mvn test -Dtest=BrowserTest#searchTest
 
 The project includes the following test scenarios:
 
-1. **Search Functionality**: Tests YouTube search feature
-2. **Cookie Management**: Validates cookie rejection flow
-3. **API Validation**: Compares subscriber counts between API and UI
-4. **Video Page Verification**: Checks video page elements and content
+1. **Search Functionality**: Tests YouTube search feature by interacting with the search box
+2. **API Validation**: Compares subscriber counts between API and UI to ensure data consistency
+3. **Video Page Verification**: Checks video page elements and content display
 
 ## Future Development
 

@@ -7,7 +7,7 @@ import org.openqa.selenium.support.FindBy;
  * Page object representing the YouTube home page.
  * <p>
  * This class contains web elements and locators for the main YouTube landing page,
- * including the search functionality and cookie consent controls.
+ * including the search functionality.
  * </p>
  *
  * @author Andrei Stoica
@@ -20,11 +20,4 @@ public class HomePage extends Page {
      */
     @FindBy(css = "[name='search_query']")
     public WebElement search;
-    
-    /**
-     * The button to reject cookies on the YouTube consent dialog.
-     * Located by a complex CSS selector targeting the reject button styling.
-     */
-    @FindBy(css=".yt-spec-button-shape-next.yt-spec-button-shape-next--filled.yt-spec-button-shape-next--mono.yt-spec-button-shape-next--size-m")
-    public WebElement rejectCookiesBtn;
 }

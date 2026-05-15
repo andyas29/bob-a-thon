@@ -76,30 +76,15 @@ public class BrowserTest {
      * Tests the YouTube search functionality.
      * <p>
      * This test verifies that users can successfully interact with the search box
-     * by rejecting cookies, clicking the search field, and entering a search query.
+     * by clicking the search field and entering a search query.
      * </p>
      */
     @Test
     @DisplayName("Search function test")
     void searchTest() {
         elementUtil.get(ConfigLoader.getBaseUrl());
-        elementUtil.click(homePage.rejectCookiesBtn);
         elementUtil.click(homePage.search);
         elementUtil.sendKeys(homePage.search, "eurovision");
-    }
-
-    /**
-     * Tests the cookie rejection functionality.
-     * <p>
-     * This test verifies that the cookie consent dialog can be dismissed
-     * by clicking the reject button.
-     * </p>
-     */
-    @Test
-    @DisplayName("Click cookie reject button")
-    void cookiesReject() {
-        elementUtil.get(ConfigLoader.getBaseUrl());
-        elementUtil.click(homePage.rejectCookiesBtn);//
     }
 
     /**
@@ -117,7 +102,6 @@ public class BrowserTest {
     void subscribers() throws Exception {
         int requestSubscribers = Request.getSubscribersCount(Request.sendGetRequest("https://youtube.googleapis.com/youtube/v3/channels?part=statistics&forHandle=as29nitate&key=" + ConfigLoader.getApiKey()));
         elementUtil.get(ConfigLoader.getBaseUrl());
-        elementUtil.click(homePage.rejectCookiesBtn);
         elementUtil.get(ConfigLoader.getBaseUrl()+"/@as29nitate");
         int pageSubscribers = Integer.parseInt(channelPage.subscriberCount.getText().split(" ")[0]);
         Assertions.assertEquals(requestSubscribers, pageSubscribers);
@@ -139,7 +123,6 @@ public class BrowserTest {
     @DisplayName("Check video page")
     void checkVideo() {
         elementUtil.get(ConfigLoader.getBaseUrl());
-        elementUtil.click(homePage.rejectCookiesBtn);
         elementUtil.get(ConfigLoader.getBaseUrl()+"/watch?v=sDZTdvbJkPM");
         Assertions.assertTrue(videoPage.channelName.isDisplayed());
         Assertions.assertTrue(videoPage.channelName.getText().contains("Democracy Now!"));
