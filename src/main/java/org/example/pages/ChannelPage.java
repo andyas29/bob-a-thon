@@ -15,6 +15,12 @@ import org.openqa.selenium.support.FindBy;
  */
 public class ChannelPage extends Page {
     /**
+     * Default constructor for the ChannelPage class.
+     */
+    public ChannelPage() {
+    }
+
+    /**
      * The web element displaying the subscriber count on a YouTube channel page.
      * Located by the CSS selector {@code yt-content-metadata-view-model > div:nth-child(3) > span}.
      */

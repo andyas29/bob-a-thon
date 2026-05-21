@@ -1,9 +1,12 @@
 package org.example.requests;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.IOException;
 
 /**
  * Utility class for making HTTP requests and processing API responses.
@@ -13,10 +16,18 @@ import java.io.InputStreamReader;
  * specific data like subscriber counts.
  * </p>
  *
- * @author Andrei Stoica
+ * @author Bob
  * @version 1.0
  */
 public class Request {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     */
+    private Request() {
+    }
 
     /**
      * Sends an HTTP GET request to the specified URL and returns the response as a string.
@@ -54,20 +65,91 @@ public class Request {
     /**
      * Extracts the subscriber count from a YouTube API JSON response.
      * <p>
-     * This method parses a JSON string returned by the YouTube Data API v3
-     * and extracts the subscriber count value. The parsing is done using
-     * simple string splitting operations.
+     * Bob made: Refactored to use Jackson for safe JSON parsing instead of brittle string splitting.
+     * This method now properly handles missing fields and unexpected response structures.
      * </p>
+     * <p>
+     * This method parses a JSON string returned by the YouTube Data API v3
+     * and extracts the subscriber count value using Jackson for safe JSON parsing.
+     * The method handles missing fields and unexpected response structures gracefully.
+     * </p>
+     * <p>
+     * Expected JSON structure:
+     * </p>
+     * <pre>
+     * {
+     *   "items": [
+     *     {
+     *       "statistics": {
+     *         "subscriberCount": "12345"
+     *       }
+     *     }
+     *   ]
+     * }
+     * </pre>
      *
      * @param json the JSON response string from the YouTube Data API
      * @return the subscriber count as an integer
-     * @throws NumberFormatException if the subscriber count cannot be parsed as an integer
-     * @throws ArrayIndexOutOfBoundsException if the JSON structure is unexpected
+     * @throws IllegalArgumentException if the JSON is invalid, missing required fields,
+     *                                  or the subscriber count cannot be parsed
      */
     public static int getSubscribersCount(String json) {
-        String subscriberCountBlock = json.split("\"subscriberCount\":")[1];
-        String subscriberCountString = subscriberCountBlock.split("\"")[1];
-        return Integer.parseInt(subscriberCountString);
+        try {
+            JsonNode root = objectMapper.readTree(json);
+            
+            // Validate that the response contains items array
+            JsonNode items = root.path("items");
+            if (items.isMissingNode() || !items.isArray() || items.isEmpty()) {
+                throw new IllegalArgumentException(
+                    "Invalid YouTube API response: 'items' array is missing or empty"
+                );
+            }
+            
+            // Get the first item
+            JsonNode firstItem = items.get(0);
+            if (firstItem == null) {
+                throw new IllegalArgumentException(
+                    "Invalid YouTube API response: first item is null"
+                );
+            }
+            
+            // Navigate to statistics.subscriberCount
+            JsonNode statistics = firstItem.path("statistics");
+            if (statistics.isMissingNode()) {
+                throw new IllegalArgumentException(
+                    "Invalid YouTube API response: 'statistics' field is missing"
+                );
+            }
+            
+            JsonNode subscriberCount = statistics.path("subscriberCount");
+            if (subscriberCount.isMissingNode()) {
+                throw new IllegalArgumentException(
+                    "Invalid YouTube API response: 'subscriberCount' field is missing"
+                );
+            }
+            
+            // Parse the subscriber count
+            String subscriberCountText = subscriberCount.asText();
+            if (subscriberCountText == null || subscriberCountText.isEmpty()) {
+                throw new IllegalArgumentException(
+                    "Invalid YouTube API response: 'subscriberCount' is empty"
+                );
+            }
+            
+            try {
+                return Integer.parseInt(subscriberCountText);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(
+                    "Invalid YouTube API response: 'subscriberCount' value '" +
+                    subscriberCountText + "' is not a valid integer", e
+                );
+            }
+            
+        } catch (IOException e) {
+            throw new IllegalArgumentException(
+                "Failed to parse JSON response: " + e.getMessage(), e
+            );
+        }
     }
 
 }

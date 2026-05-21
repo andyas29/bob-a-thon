@@ -17,6 +17,12 @@ package org.example;
  */
 public class Main {
     /**
+     * Private constructor to prevent instantiation of this main class.
+     */
+    private Main() {
+    }
+
+    /**
      * Main method - currently unused as tests are executed via Maven/JUnit.
      *
      * @param args command line arguments (not used)

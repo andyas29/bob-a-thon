@@ -1,0 +1,99 @@
+Code Review Fix List
+Project: bob-a-thon
+Date: 2026-05-18
+
+Priority 1 - Critical stability fixes
+1. WebDriverWrapper: validate browser configuration
+   - Add a default branch in the browser switch.
+   - Throw IllegalArgumentException for null or unsupported browser values.
+   - Do not call setDefaultSettings() when driver initialization fails.
+
+2. WebDriverWrapper: fix remote driver creation
+   - Replace the current RemoteWebDriver constructor usage with one that includes the remote server URL.
+   - Make the remote URL configurable from properties.
+
+3. Request: replace manual JSON parsing
+   - Stop parsing subscriberCount using String.split().
+   - Use Jackson to deserialize the API response safely.
+   - Add clear handling for missing fields or unexpected response shapes.
+
+4. BrowserTest: remove brittle UI subscriber parsing
+   - Do not parse subscriberCount with Integer.parseInt(split(" ")[0]).
+   - Normalize localized and abbreviated subscriber formats if UI/API comparison must remain.
+   - Prefer validating presence/format unless a robust normalization strategy is implemented.
+
+Priority 2 - Configuration and error handling
+5. ConfigLoader: load configuration from classpath
+   - Replace FileInputStream on src/main/resources paths with classpath resource loading.
+   - Ensure config works when executed outside the IDE or from packaged builds.
+
+6. ConfigLoader: cache loaded properties
+   - Load config.properties once.
+   - Load secrets.properties once.
+   - Reuse loaded Properties instances instead of reading files on every getter call.
+
+7. ConfigLoader: fail fast on missing config
+   - Replace printStackTrace() and null returns with descriptive runtime exceptions.
+   - Validate required keys such as browser, baseUrl, and api.key.
+
+8. BrowserTest cleanup: guard teardown
+   - Null-check driver before quit().
+   - Prevent teardown exceptions from hiding setup/test failures.
+
+Priority 3 - Test reliability improvements
+9. BrowserTest searchTest: add assertions
+   - Verify that search navigation happened.
+   - Assert URL, results container, or another stable search result page indicator.
+
+10. BrowserTest checkVideo: remove hard-coded live content assertions
+    - Avoid exact title assertions against external live content.
+    - Assert stable page structure or known reusable test data instead.
+
+11. BrowserTest subscribers: reduce external flakiness
+    - Avoid dependence on live external API data where possible.
+    - Skip or gate the test if API key is missing.
+    - Consider mocking API responses for deterministic validation.
+
+12. BrowserTest navigation: remove redundant page loads
+    - Eliminate repeated get(baseUrl) calls before direct navigation to target pages.
+
+Priority 4 - Selenium interaction hardening
+13. WebElementUtil: add explicit waits
+    - Wait for visibility/clickability before interacting with elements.
+    - Do not rely only on implicit waits for dynamic YouTube pages.
+
+14. WebElementUtil click: improve exception handling
+    - Handle ElementClickInterceptedException explicitly.
+    - Provide clearer error messages with locator/page context.
+    - Avoid catching generic RuntimeException unless adding meaningful context.
+
+15. WebElementUtil logging
+    - Remove System.out.println or replace it with a logger.
+
+Priority 5 - Cleanup and maintainability
+16. BrowserTest: remove empty @BeforeAll
+    - Delete the no-op init() method if unused.
+
+17. Base Page class: decide on purpose
+    - Either keep shared page behavior there or remove the empty base class until needed.
+
+18. config.properties: use a stable base URL
+    - Replace https://www.youtube.ro/ with https://www.youtube.com/ unless locale-specific behavior is required.
+
+Suggested implementation order
+1. ConfigLoader
+2. WebDriverWrapper
+3. Request JSON parsing
+4. BrowserTest teardown and assertions
+5. WebElementUtil explicit waits
+6. Test data and brittleness cleanup
+
+Definition of done
+- Configuration is loaded from classpath and validated.
+- Unsupported browser values fail with clear messages.
+- Remote execution is correctly configurable.
+- API JSON parsing uses Jackson.
+- Tests contain meaningful assertions.
+- Teardown is safe.
+- UI interactions use explicit waits.
+- Hard-coded live-content assertions are reduced or removed.

@@ -12,6 +12,12 @@ package org.example.constants;
  */
 public class Browsers {
     /**
+     * Private constructor to prevent instantiation of this constants class.
+     */
+    private Browsers() {
+    }
+
+    /**
      * Constant for Google Chrome browser.
      */
     public static final String CHROME="chrome";

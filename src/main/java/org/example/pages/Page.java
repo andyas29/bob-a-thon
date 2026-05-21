@@ -13,4 +13,9 @@ package org.example.pages;
  */
 public class Page {
 
+    /**
+     * Default constructor for the base Page class.
+     */
+    public Page() {
+    }
 }

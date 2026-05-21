@@ -15,6 +15,12 @@ import org.openqa.selenium.support.FindBy;
  */
 public class VideoPage extends Page {
     /**
+     * Default constructor for the VideoPage class.
+     */
+    public VideoPage() {
+    }
+
+    /**
      * The web element displaying the video title.
      * Located by the CSS selector {@code #title}.
      */
