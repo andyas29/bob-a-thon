@@ -38,6 +38,7 @@ public class WebDriverWrapper {
      */
     public WebDriverWrapper(String browser) {
         switch (browser) {
+            default -> throw new IllegalArgumentException("Invalid browser type");
             case Browsers.CHROME -> driver = new ChromeDriver();
             case Browsers.EDGE -> driver = new EdgeDriver();
             case Browsers.FIREFOX -> driver = new FirefoxDriver();
@@ -45,6 +46,7 @@ public class WebDriverWrapper {
                 Capabilities capabilities = new ChromeOptions();
                 driver= new RemoteWebDriver(capabilities);
             }
+            
         }
         setDefaultSettings();
     }
