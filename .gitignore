@@ -45,3 +45,7 @@ build/
 
 ### Secrets ###
 src/main/resources/secrets.properties
+
+### Allure Reports ###
+allure-results/
+.allure/

@@ -1,5 +1,6 @@
 package steps;
 
+import io.qameta.allure.*;
 import org.example.pages.ChannelPage;
 import org.example.pages.VideoPage;
 import org.example.requests.Request;
@@ -26,6 +27,8 @@ import org.junit.jupiter.api.*;
  * @version 1.0
  */
 @Tag("browser")
+@Epic("YouTube Automation")
+@Feature("Core Functionality Tests")
 public class BrowserTest {
     private WebElementUtil elementUtil;
     private HomePage homePage;
@@ -81,6 +84,9 @@ public class BrowserTest {
      */
     @Test
     @DisplayName("Search function test")
+    @Description("Verifies that users can successfully interact with the YouTube search box")
+    @Story("Search Functionality")
+    @Severity(SeverityLevel.CRITICAL)
     void searchTest() {
         elementUtil.get(ConfigLoader.getBaseUrl());
         elementUtil.click(homePage.search);
@@ -99,13 +105,19 @@ public class BrowserTest {
      */
     @Test
     @DisplayName("Check subscribers count")
+    @Description("Validates that subscriber count displayed on channel page matches YouTube API data")
+    @Story("API Validation")
+    @Severity(SeverityLevel.NORMAL)
     void subscribers() throws Exception {
         int requestSubscribers = Request.getSubscribersCount(Request.sendGetRequest("https://youtube.googleapis.com/youtube/v3/channels?part=statistics&forHandle=as29nitate&key=" + ConfigLoader.getApiKey()));
+        Allure.step("Fetch subscriber count from API: " + requestSubscribers);
+        
         elementUtil.get(ConfigLoader.getBaseUrl());
         elementUtil.get(ConfigLoader.getBaseUrl()+"/@as29nitate");
         int pageSubscribers = Integer.parseInt(channelPage.subscriberCount.getText().split(" ")[0]);
+        Allure.step("Get subscriber count from UI: " + pageSubscribers);
+        
         Assertions.assertEquals(requestSubscribers, pageSubscribers);
-
     }
 
     /**
@@ -121,12 +133,21 @@ public class BrowserTest {
      */
     @Test
     @DisplayName("Check video page")
+    @Description("Verifies that video page displays correctly with all expected elements")
+    @Story("Video Page Verification")
+    @Severity(SeverityLevel.NORMAL)
     void checkVideo() {
         elementUtil.get(ConfigLoader.getBaseUrl());
         elementUtil.get(ConfigLoader.getBaseUrl()+"/watch?v=sDZTdvbJkPM");
+        
+        Allure.step("Verify channel name is displayed");
         Assertions.assertTrue(videoPage.channelName.isDisplayed());
         Assertions.assertTrue(videoPage.channelName.getText().contains("Democracy Now!"));
+        
+        Allure.step("Verify video title is displayed");
         Assertions.assertTrue(videoPage.title.getText().contains("Top U.S. & World Headlines — February 19, 2025"));
+        
+        Allure.step("Verify bottom controls are visible");
         Assertions.assertTrue(videoPage.bottomRow.isDisplayed());
     }
 }
